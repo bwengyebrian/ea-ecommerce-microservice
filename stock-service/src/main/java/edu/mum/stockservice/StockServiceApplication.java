@@ -15,6 +15,8 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootApplication
 @EnableEurekaClient
@@ -27,6 +29,11 @@ public class StockServiceApplication implements ApplicationRunner {
     @Autowired
     private VendorService vendorService;
 
+
+    @Bean
+    public RestTemplate getRestTemplate(){
+        return new RestTemplate();
+    }
 
     public static void main(String[] args) {
         SpringApplication.run(StockServiceApplication.class, args);
@@ -58,7 +65,7 @@ public class StockServiceApplication implements ApplicationRunner {
         p1.setProductName("LG");
         p1.setAvailableItems(100);
         p1.setCategory(c1);
-        c1.setProductList(p1);
+        c1.setProducts(p1);
         p1.setVendor(v1);
         v1.setProductList(p1);
         categoryService.saveCategory(c1);
@@ -69,7 +76,7 @@ public class StockServiceApplication implements ApplicationRunner {
         p2.setProductName("LG");
         p2.setAvailableItems(100);
         p2.setCategory(c2);
-        c2.setProductList(p1);
+        c2.setProducts(p1);
         p2.setVendor(v2);
         v2.setProductList(p2);
         categoryService.saveCategory(c2);
@@ -81,7 +88,7 @@ public class StockServiceApplication implements ApplicationRunner {
         p3.setProductName("LG");
         p3.setAvailableItems(100);
         p3.setCategory(c3);
-        c3.setProductList(p3);
+        c3.setProducts(p3);
         p3.setVendor(v3);
         v3.setProductList(p3);
         categoryService.saveCategory(c3);

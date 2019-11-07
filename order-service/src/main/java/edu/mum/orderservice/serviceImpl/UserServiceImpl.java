@@ -4,7 +4,9 @@ import edu.mum.orderservice.model.User;
 import edu.mum.orderservice.repository.UserRepository;
 import edu.mum.orderservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class UserServiceImpl implements UserService {
     @Autowired
     private UserRepository userRepository;

@@ -21,9 +21,12 @@ public class Order {
     @Column(name = "Total_Amount")
     private double totalAmount;
     private boolean orderComplete = false;
-    @OneToMany(mappedBy = "order")
+
+    @OneToMany
     private List<Product> products = new ArrayList<>();
+    @OneToOne
     private User user;
+
 
     public void setProducts(Product product){
         products.add(product);
