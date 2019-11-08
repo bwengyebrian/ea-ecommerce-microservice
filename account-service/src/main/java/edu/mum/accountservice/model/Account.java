@@ -18,6 +18,8 @@ public class Account {
     @Column(name = "Last_Name")
     private String lastName;
     private String email;
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "account")
-    private List<Address> shippingAddresses = new ArrayList<>();
+    @OneToOne
+    private Address address;
+
+
 }
