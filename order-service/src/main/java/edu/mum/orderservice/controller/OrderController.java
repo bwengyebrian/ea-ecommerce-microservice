@@ -25,16 +25,25 @@ public class OrderController {
     @Autowired
     private ProductService productService;
 
+    @GetMapping("/")
+    public String displayOrderService(@ModelAttribute("product") Product product){
+        return "orderPage";
+    }
 
-    @PostMapping("/addToCart/{productId}")
+
+    @PostMapping("/addToCart")
     @ResponseBody
-    public Order productsInCart(@PathVariable("productId") int id){
+    public Order productsInCart(@RequestBody Product product){
 
+//        User user = userService.getUserByUsername("abebe");
         //get user from userservice
-        User user = userService.getUserByUsername("abebe");
+        User user = new User();
+        user.setUserId(22);
+        user.setUsername("abebe");
+
 
         //get the cart
-        Order order = orderService.getCart();
+        Order order = orderService.getCart(user, false);
         if (order == null){
             order = new Order();
         }
@@ -42,13 +51,16 @@ public class OrderController {
         //get the product - calling the proper api
         //check if there is enough number of items in the stock
 
-        Product product = productService.getProductById(id);
+        order.setProducts(product);
 
         //calculate total price
-        order.setTotalAmount(order.getTotalAmount() + product.getPrice());
+        double totalPrice = 0;
+        for (int i=0; i<order.getProducts().size(); i++){
+            totalPrice = totalPrice +
+                    order.getProducts().get(i).getPrice() * order.getProducts().get(i).getItemOrdered();
 
-        order.getProducts().add(product);
-
+        }
+        order.setTotalAmount(totalPrice);
 
       return orderService.saveOrder(order);
 
@@ -57,26 +69,29 @@ public class OrderController {
     @GetMapping("/placeOrder")
     public String placingOrder(@ModelAttribute("paymentMethod") PaymentMethod paymentMethod, Model model){
 
-        Order order = orderService.getCart();
+        User user1 = new User();
+        user1.setUserId(22);
+        user1.setUsername("abebe");
+
+        Order order = orderService.getCart(user1, false);
         model.addAttribute("order", order);
 
-        //ask shipping address
-        User user = userService.getUserByUsername("abebe");
-
-        model.addAttribute("user", user);
+        //ask shipping address - get from account service
+        //display address form if user want to change shipping address
 
         return "/productInCart";
     }
 
-    @PostMapping("/checkout{userId}")
+    @PostMapping("/checkout")
     @ResponseBody
-    public String checkoutOrder(@PathVariable("userId") int userId, @RequestBody PaymentMethod paymentMethod){
+    public String checkoutOrder(@RequestBody PaymentMethod paymentMethod){
 
-        //get user from userservice -- using the userId
-        User user = userService.getUserByUsername("abebe");
+        User user1 = new User();
+        user1.setUserId(22);
+        user1.setUsername("abebe");
 
         //get the cart
-        Order order = orderService.getCart();
+        Order order = orderService.getCart(user1, false);
 
         //call payment method service
         //get a string response from payment method service
@@ -86,8 +101,14 @@ public class OrderController {
         order.setOrderComplete(true);
         orderService.saveOrder(order);
 
-        //call shipping address and provide order detail
+        //call shipping service and provide order detail
 
         return "You successfully placed an order";
     }
+
+//    @RequestMapping("/hello")
+//    @ResponseBody
+//    public String hello() {
+//        return "Hello OrderService!";
+//    }
 }
