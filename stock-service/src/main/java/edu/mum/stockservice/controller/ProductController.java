@@ -32,7 +32,8 @@ public class ProductController {
 
     @GetMapping("/{id}/availableItems")
     public Integer getNumberOfProductInTheStock(@PathVariable("id") int id){
-        return productService.fetchProdut(id).getAvailableItems();
+        //return productService.fetchProdut(id).getAvailableItems();
+        return  null;
     }
 
 }

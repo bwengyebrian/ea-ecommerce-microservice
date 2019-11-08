@@ -30,10 +30,10 @@ public class StockServiceApplication implements ApplicationRunner {
     private VendorService vendorService;
 
 
-    @Bean
-    public RestTemplate getRestTemplate(){
-        return new RestTemplate();
-    }
+//    @Bean
+//    public RestTemplate getRestTemplate(){
+//        return new RestTemplate();
+//    }
 
     public static void main(String[] args) {
         SpringApplication.run(StockServiceApplication.class, args);
@@ -90,6 +90,7 @@ public class StockServiceApplication implements ApplicationRunner {
         p3.setCategory(c3);
         c3.setProducts(p3);
         p3.setVendor(v3);
+        p3.setPrice(20.0);
         v3.setProductList(p3);
         categoryService.saveCategory(c3);
         vendorService.saveVendor(v3);
