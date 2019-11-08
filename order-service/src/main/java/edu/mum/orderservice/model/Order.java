@@ -19,6 +19,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name = "Total_Amount")
+
     private double totalAmount;
     private boolean orderComplete = false;
 

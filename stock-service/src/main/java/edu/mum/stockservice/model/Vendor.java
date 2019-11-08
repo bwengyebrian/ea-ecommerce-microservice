@@ -7,10 +7,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Setter
-@Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@Setter
+@Getter
 @ToString
 public class Vendor {
 
@@ -19,10 +19,10 @@ public class Vendor {
     private long id;
     @Column(name = "Category_Name")
     private String vendorName;
-    @OneToMany(mappedBy = "vendor")
-    private List<Product> productList = new ArrayList<>();
+    @OneToMany(mappedBy = "vendor", fetch = FetchType.LAZY)
+    private List<Product> products = new ArrayList<>();
 
    public void setProductList(Product product){
-        productList.add(product);
+        getProducts().add(product);
     }
 }

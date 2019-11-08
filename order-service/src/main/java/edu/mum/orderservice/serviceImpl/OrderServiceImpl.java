@@ -1,6 +1,7 @@
 package edu.mum.orderservice.serviceImpl;
 
 import edu.mum.orderservice.model.Order;
+import edu.mum.orderservice.model.User;
 import edu.mum.orderservice.repository.OrderRepository;
 import edu.mum.orderservice.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,9 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Order getCart() {
-        return orderRepository.findByOrderCompleteIsFalse();
+    public Order getCart(User user, Boolean orderCompleted) {
+        return orderRepository.findByUserAndOrderCompleteIsFalse(user, orderCompleted);
     }
+
+
 }
