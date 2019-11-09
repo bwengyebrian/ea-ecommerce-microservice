@@ -82,19 +82,12 @@ public class OrderController {
 
       return orderService.saveOrder(order);
 
-//        return product;
-
     }
 
     @GetMapping("/placeOrder")
-    public String placingOrder(@ModelAttribute("paymentMethod") PaymentMethod paymentMethod, Model model){
+    public Address placingOrder(@ModelAttribute("paymentMethod") PaymentMethod paymentMethod, Model model){
 
-//        User user1 = new User();
-//        user1.setUserId(22);
-//        user1.setUsername("abebe");
         Account account = accountFeignClient.getAccount(1);
-//        user1.setUserid(account.getId());
-//        user1.setUsername(account.getFirstName());
 
         Order order = orderService.getCart(account.getId());
         model.addAttribute("order", order);
@@ -102,7 +95,8 @@ public class OrderController {
         //ask shipping address - get from account service
         //display address form if user want to change shipping address
 
-        return "/productInCart";
+//        return "/productInCart";
+        return account.getAddress();
     }
 
     @PostMapping("/checkout")
