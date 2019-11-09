@@ -12,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
+@Table(name = "ordertable")
 public class Order {
 
 
@@ -23,10 +24,10 @@ public class Order {
     private double totalAmount;
     private boolean orderComplete = false;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order")
     private List<Product> products = new ArrayList<>();
-    @OneToOne
-    private User user;
+
+    private long userid;
 
 
     public void setProducts(Product product){

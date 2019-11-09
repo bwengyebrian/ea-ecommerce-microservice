@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: discovery-service
+
+eureka:
+  client:
+#    eureka-server-connect-timeout-seconds: 500000000
+    enabled: true
+    fetch-registry: false
+    register-with-eureka: false
+
+server:
+  port: 8761

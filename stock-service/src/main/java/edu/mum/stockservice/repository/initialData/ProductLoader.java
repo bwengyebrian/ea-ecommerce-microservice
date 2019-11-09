@@ -49,6 +49,7 @@ public class ProductLoader implements ApplicationRunner {
 
         Product p1 = new Product();
         p1.setProductName("LG");
+        p1.setPrice(300);
         p1.setAvailableItems(100);
         p1.setCategory(c1);
         c1.setProducts(p1);
@@ -59,8 +60,9 @@ public class ProductLoader implements ApplicationRunner {
         productRepository.save(p1);
 
         Product p2 = new Product();
-        p2.setProductName("LG");
+        p2.setProductName("Esat wey abeba");
         p2.setAvailableItems(100);
+        p2.setPrice(25);
         p2.setCategory(c2);
         c2.setProducts(p2);
         p2.setVendor(v2);
@@ -71,8 +73,9 @@ public class ProductLoader implements ApplicationRunner {
 
 
         Product p3 = new Product();
-        p3.setProductName("LG");
+        p3.setProductName("Beyeaynet");
         p3.setAvailableItems(100);
+        p3.setPrice(12);
         p3.setCategory(c3);
         c3.setProducts(p3);
         p3.setVendor(v3);
