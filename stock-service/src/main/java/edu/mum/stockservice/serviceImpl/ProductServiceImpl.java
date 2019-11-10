@@ -27,4 +27,12 @@ public class ProductServiceImpl implements ProductService {
     public Product fetchProdut(long id) {
         return productRepository.findById(id).get();
     }
+
+    @Override
+    public Product reduceStock(long id, int ammout) {
+        Product product = fetchProdut(id);
+        product.setAvailableItems(product.getAvailableItems() - ammout);
+
+        return saveProduct(product);
+    }
 }

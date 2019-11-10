@@ -18,6 +18,7 @@ public class Product {
     private long id;
     @Column(name = "Product_Name")
     private String productName;
+    private long productIdInStock;
     private double price;
     private int itemOrdered;
 

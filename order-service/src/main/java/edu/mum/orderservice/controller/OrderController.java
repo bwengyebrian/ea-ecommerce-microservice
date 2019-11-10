@@ -1,6 +1,7 @@
 package edu.mum.orderservice.controller;
 
 import edu.mum.orderservice.feign.AccountFeignClient;
+import edu.mum.orderservice.feign.PaymentMethodFeignClient;
 import edu.mum.orderservice.feign.StockFeignClient;
 import edu.mum.orderservice.model.*;
 import edu.mum.orderservice.service.OrderService;
@@ -18,34 +19,23 @@ public class OrderController {
     private OrderService orderService;
     @Autowired
     private ProductService productService;
-
     @Autowired
     private AccountFeignClient accountFeignClient;
     @Autowired
     private StockFeignClient stockFeignClient;
+    @Autowired
+    private PaymentMethodFeignClient paymentMethodFeignClient;
 
     @GetMapping("/")
     public String displayOrderService(@ModelAttribute("product") Product product){
         return "orderPage";
     }
 
-    @PostMapping("/")
-    @ResponseBody
-    public Product displayOrderServiceee(@RequestBody Product product){
-        return product;
-    }
-
-    @GetMapping("/get")
-    @ResponseBody
-    public String getOrder(){
-        return "you got it";
-    }
-
 
     @PostMapping("/addToCart")
     @ResponseBody
     public Order productsInCart(@RequestBody Product product){
-
+        product.setProductIdInStock(product.getId());
 
         Account account = accountFeignClient.getAccount(1);
         System.out.println(account.getFirstName());
@@ -63,6 +53,7 @@ public class OrderController {
 
 //        order.setProducts(product);
         Product product1 = new Product();
+        product1.setProductIdInStock(product.getProductIdInStock());
         product1.setProductName(stockFeignClient.getProduct(product.getId()).getProductName());
         product1.setPrice(stockFeignClient.getProduct(product.getId()).getPrice());
         product1.setItemOrdered(product.getItemOrdered());
@@ -84,51 +75,56 @@ public class OrderController {
 
     }
 
-    @GetMapping("/placeOrder")
-    public Address placingOrder(@ModelAttribute("paymentMethod") PaymentMethod paymentMethod, Model model){
+    @PostMapping("/placeOrder")
+    @ResponseBody
+    public String placingOrder(@RequestBody PaymentMethod paymentMethod, Model model){
 
         Account account = accountFeignClient.getAccount(1);
 
         Order order = orderService.getCart(account.getId());
         model.addAttribute("order", order);
 
-        //ask shipping address - get from account service
-        //display address form if user want to change shipping address
+        //contact payment service
+        String paymentType = paymentMethodFeignClient.paymentType();
+        order.setPaymentType(paymentMethod.getPaymentMethodType());
+        orderService.saveOrder(order);
 
-//        return "/productInCart";
-        return account.getAddress();
+        return paymentType + order.getPaymentType();
     }
 
-    @PostMapping("/checkout")
+    @GetMapping("/checkout")
     @ResponseBody
-    public String checkoutOrder(@RequestBody PaymentMethod paymentMethod){
+    public String checkoutOrder(){
 
-//        User user1 = new User();
-//        user1.setUserId(22);
-//        user1.setUsername("abebe");
         Account account = accountFeignClient.getAccount(1);
-//        user1.setUserid(account.getId());
-//        user1.setUsername(account.getFirstName());
 
         //get the cart
         Order order = orderService.getCart(account.getId());
 
         //call payment method service
-        //get a string response from payment method service
+        String paymentMade = paymentMethodFeignClient.paymentMade();
 
         //call stock service to reduce the number of available items
+        OrderedProduct orderedProduct = new OrderedProduct();
+        for (int i = 0; i<order.getProducts().size(); i++){
+            orderedProduct.setId(order.getProducts().get(i).getProductIdInStock());
+            orderedProduct.setAmount(order.getProducts().get(i).getItemOrdered());
+            stockFeignClient.reduceProductStock(orderedProduct);
+        }
+
 
         order.setOrderComplete(true);
         orderService.saveOrder(order);
 
         //call shipping service and provide order detail
+        String orderSuccessMsg = "You successfully placed an order: " +
+                "Your order: " ;
+        String orderedProducts = "";
+        for(int i =0; i<order.getProducts().size(); i++){
+            orderedProducts + order.getProducts().get(i).getProductName() + " "
+        }
 
         return "You successfully placed an order";
     }
 
-//    @RequestMapping("/hello")
-//    @ResponseBody
-//    public String hello() {
-//        return "Hello OrderService!";
-//    }
 }

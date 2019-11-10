@@ -9,4 +9,5 @@ public interface ProductService {
     Product saveProduct(Product product);
     List<Product> fetchAllProducts();
     Product fetchProdut(long id);
+    Product reduceStock(long id, int ammout);
 }
