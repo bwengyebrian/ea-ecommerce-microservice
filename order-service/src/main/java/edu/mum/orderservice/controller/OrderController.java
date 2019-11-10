@@ -2,6 +2,7 @@ package edu.mum.orderservice.controller;
 
 import edu.mum.orderservice.feign.AccountFeignClient;
 import edu.mum.orderservice.feign.PaymentMethodFeignClient;
+import edu.mum.orderservice.feign.ShippingFeignClient;
 import edu.mum.orderservice.feign.StockFeignClient;
 import edu.mum.orderservice.model.*;
 import edu.mum.orderservice.service.OrderService;
@@ -25,6 +26,8 @@ public class OrderController {
     private StockFeignClient stockFeignClient;
     @Autowired
     private PaymentMethodFeignClient paymentMethodFeignClient;
+    @Autowired
+    private ShippingFeignClient shippingFeignClient;
 
     @GetMapping("/")
     public String displayOrderService(@ModelAttribute("product") Product product){
@@ -37,8 +40,8 @@ public class OrderController {
     public Order productsInCart(@RequestBody Product product){
         product.setProductIdInStock(product.getId());
 
-        Account account = accountFeignClient.getAccount(1);
-        System.out.println(account.getFirstName());
+        Account account = accountFeignClient.getAccount(2);
+//        System.out.println(account.getFirstName());
 
         //get the cart
         Order order = orderService.getCart(account.getId());
@@ -51,27 +54,28 @@ public class OrderController {
         //get the product - calling the proper api
         //check if there is enough number of items in the stock
 
-//        order.setProducts(product);
         Product product1 = new Product();
         product1.setProductIdInStock(product.getProductIdInStock());
-        product1.setProductName(stockFeignClient.getProduct(product.getId()).getProductName());
-        product1.setPrice(stockFeignClient.getProduct(product.getId()).getPrice());
+        product1.setProductName(stockFeignClient.getProduct(product.getProductIdInStock()).getProductName());
+        double price = stockFeignClient.getProduct(product.getProductIdInStock()).getPrice();
+        product1.setPrice(price);
         product1.setItemOrdered(product.getItemOrdered());
 
-        order.setProducts(product1);
         productService.saveProduct(product1);
+        order.setProducts(product1);
 
         //calculate total price
         double totalPrice = 0;
         for (int i=0; i<order.getProducts().size(); i++){
-            totalPrice = totalPrice +
-                    order.getProducts().get(i).getPrice() * order.getProducts().get(i).getItemOrdered();
+            totalPrice += order.getProducts().get(i).getPrice() * order.getProducts().get(i).getItemOrdered();
 
         }
         order.setTotalAmount(totalPrice);
         orderService.saveOrder(order);
+        product1.setOrder(order);
+        productService.saveProduct(product1);
 
-      return orderService.saveOrder(order);
+      return order;
 
     }
 
@@ -79,10 +83,10 @@ public class OrderController {
     @ResponseBody
     public String placingOrder(@RequestBody PaymentMethod paymentMethod, Model model){
 
-        Account account = accountFeignClient.getAccount(1);
+
+        Account account = accountFeignClient.getAccount(2);
 
         Order order = orderService.getCart(account.getId());
-        model.addAttribute("order", order);
 
         //contact payment service
         String paymentType = paymentMethodFeignClient.paymentType();
@@ -92,11 +96,11 @@ public class OrderController {
         return paymentType + order.getPaymentType();
     }
 
-    @GetMapping("/checkout")
+    @PostMapping("/checkout")
     @ResponseBody
-    public String checkoutOrder(){
+    public String checkoutOrder(@RequestBody Address address){
 
-        Account account = accountFeignClient.getAccount(1);
+        Account account = accountFeignClient.getAccount(2);
 
         //get the cart
         Order order = orderService.getCart(account.getId());
@@ -112,19 +116,26 @@ public class OrderController {
             stockFeignClient.reduceProductStock(orderedProduct);
         }
 
-
         order.setOrderComplete(true);
-        orderService.saveOrder(order);
+        order = orderService.saveOrder(order);
 
-        //call shipping service and provide order detail
-        String orderSuccessMsg = "You successfully placed an order: " +
-                "Your order: " ;
-        String orderedProducts = "";
+        String orderSuccessMsg = "You successfully placed an order: ";
+        String orderedProductList = "";
         for(int i =0; i<order.getProducts().size(); i++){
-            orderedProducts + order.getProducts().get(i).getProductName() + " "
+            orderedProductList = orderedProductList + "| " + order.getProducts().get(i).getProductName() + " - quantity= " +
+                    order.getProducts().get(i).getItemOrdered();
         }
+        orderSuccessMsg = orderSuccessMsg + " " + orderedProductList + ". ";
 
-        return "You successfully placed an order";
+        //Send item and address to shipping service
+//        ItemToShip item = new ItemToShip();
+//        item.setOrder(order);
+//        item.setAddress(address);
+//        String shippingDetail = shippingFeignClient.initiateShipping(item);
+        String shippingDetail = shippingFeignClient.initiateShipping();
+
+
+        return orderSuccessMsg + shippingDetail;
     }
 
 }

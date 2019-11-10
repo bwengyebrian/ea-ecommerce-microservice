@@ -1,4 +1,4 @@
-package edu.mum.orderservice.model;
+package edu.mum.shippingservice.model;
 
 import lombok.Data;
 
