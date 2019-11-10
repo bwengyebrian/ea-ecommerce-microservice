@@ -1,5 +1,6 @@
 package edu.mum.orderservice.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -17,8 +18,14 @@ public class Product {
     private long id;
     @Column(name = "Product_Name")
     private String productName;
+    private long productIdInStock;
     private double price;
     private int itemOrdered;
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
 
 
 }

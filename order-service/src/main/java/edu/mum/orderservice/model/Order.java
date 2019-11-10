@@ -7,11 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Setter
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
-@ToString
+@Data
+@Table(name = "ordertb")
 public class Order {
 
 
@@ -22,11 +19,13 @@ public class Order {
 
     private double totalAmount;
     private boolean orderComplete = false;
+    @Column(name = "Payment_Type")
+    private String paymentType;
 
-    @OneToMany
+    @OneToMany(mappedBy = "order")
     private List<Product> products = new ArrayList<>();
-    @OneToOne
-    private User user;
+
+    private long userid;
 
 
     public void setProducts(Product product){

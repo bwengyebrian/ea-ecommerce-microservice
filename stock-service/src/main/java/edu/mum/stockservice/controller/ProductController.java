@@ -1,5 +1,6 @@
 package edu.mum.stockservice.controller;
 
+import edu.mum.stockservice.model.OrderedProduct;
 import edu.mum.stockservice.model.Product;
 import edu.mum.stockservice.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +21,7 @@ public class ProductController {
 //    }
 
     @GetMapping("/{id}/detail")
-    public Product getProduct(@PathVariable("id") int id){
+    public Product getProduct(@PathVariable("id") long id){
 
         return productService.fetchProdut(id);
     }
@@ -35,5 +36,11 @@ public class ProductController {
         //return productService.fetchProdut(id).getAvailableItems();
         return  null;
     }
+
+   @PostMapping("/reduceStock")
+    public void reduceProductStock(@RequestBody OrderedProduct orderedProduct){
+       productService.reduceStock(orderedProduct.getId(), orderedProduct.getAmount());
+
+   }
 
 }

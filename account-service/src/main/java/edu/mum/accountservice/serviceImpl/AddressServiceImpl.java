@@ -4,9 +4,11 @@ import edu.mum.accountservice.model.Address;
 import edu.mum.accountservice.repository.AddressRepository;
 import edu.mum.accountservice.service.AddressService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class AddressServiceImpl implements AddressService {
     @Autowired
     private AddressRepository addressRepository;

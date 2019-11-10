@@ -1,29 +1,30 @@
 package edu.mum.orderservice.controller;
 
-import edu.mum.orderservice.model.Order;
-import edu.mum.orderservice.model.PaymentMethod;
-import edu.mum.orderservice.model.Product;
-import edu.mum.orderservice.model.User;
+import edu.mum.orderservice.feign.AccountFeignClient;
+import edu.mum.orderservice.feign.PaymentMethodFeignClient;
+import edu.mum.orderservice.feign.StockFeignClient;
+import edu.mum.orderservice.model.*;
 import edu.mum.orderservice.service.OrderService;
 import edu.mum.orderservice.service.ProductService;
-import edu.mum.orderservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Controller
 @RequestMapping("/order")
 public class OrderController {
 
     @Autowired
-    private UserService userService;
-    @Autowired
     private OrderService orderService;
     @Autowired
     private ProductService productService;
+    @Autowired
+    private AccountFeignClient accountFeignClient;
+    @Autowired
+    private StockFeignClient stockFeignClient;
+    @Autowired
+    private PaymentMethodFeignClient paymentMethodFeignClient;
 
     @GetMapping("/")
     public String displayOrderService(@ModelAttribute("product") Product product){
@@ -34,24 +35,31 @@ public class OrderController {
     @PostMapping("/addToCart")
     @ResponseBody
     public Order productsInCart(@RequestBody Product product){
+        product.setProductIdInStock(product.getId());
 
-//        User user = userService.getUserByUsername("abebe");
-        //get user from userservice
-        User user = new User();
-        user.setUserId(22);
-        user.setUsername("abebe");
-
+        Account account = accountFeignClient.getAccount(1);
+        System.out.println(account.getFirstName());
 
         //get the cart
-        Order order = orderService.getCart(user, false);
+        Order order = orderService.getCart(account.getId());
         if (order == null){
             order = new Order();
         }
 
+        order.setUserid(account.getId());
+
         //get the product - calling the proper api
         //check if there is enough number of items in the stock
 
-        order.setProducts(product);
+//        order.setProducts(product);
+        Product product1 = new Product();
+        product1.setProductIdInStock(product.getProductIdInStock());
+        product1.setProductName(stockFeignClient.getProduct(product.getId()).getProductName());
+        product1.setPrice(stockFeignClient.getProduct(product.getId()).getPrice());
+        product1.setItemOrdered(product.getItemOrdered());
+
+        order.setProducts(product1);
+        productService.saveProduct(product1);
 
         //calculate total price
         double totalPrice = 0;
@@ -61,54 +69,62 @@ public class OrderController {
 
         }
         order.setTotalAmount(totalPrice);
+        orderService.saveOrder(order);
 
       return orderService.saveOrder(order);
 
     }
 
-    @GetMapping("/placeOrder")
-    public String placingOrder(@ModelAttribute("paymentMethod") PaymentMethod paymentMethod, Model model){
+    @PostMapping("/placeOrder")
+    @ResponseBody
+    public String placingOrder(@RequestBody PaymentMethod paymentMethod, Model model){
 
-        User user1 = new User();
-        user1.setUserId(22);
-        user1.setUsername("abebe");
+        Account account = accountFeignClient.getAccount(1);
 
-        Order order = orderService.getCart(user1, false);
+        Order order = orderService.getCart(account.getId());
         model.addAttribute("order", order);
 
-        //ask shipping address - get from account service
-        //display address form if user want to change shipping address
+        //contact payment service
+        String paymentType = paymentMethodFeignClient.paymentType();
+        order.setPaymentType(paymentMethod.getPaymentMethodType());
+        orderService.saveOrder(order);
 
-        return "/productInCart";
+        return paymentType + order.getPaymentType();
     }
 
-    @PostMapping("/checkout")
+    @GetMapping("/checkout")
     @ResponseBody
-    public String checkoutOrder(@RequestBody PaymentMethod paymentMethod){
+    public String checkoutOrder(){
 
-        User user1 = new User();
-        user1.setUserId(22);
-        user1.setUsername("abebe");
+        Account account = accountFeignClient.getAccount(1);
 
         //get the cart
-        Order order = orderService.getCart(user1, false);
+        Order order = orderService.getCart(account.getId());
 
         //call payment method service
-        //get a string response from payment method service
+        String paymentMade = paymentMethodFeignClient.paymentMade();
 
         //call stock service to reduce the number of available items
+        OrderedProduct orderedProduct = new OrderedProduct();
+        for (int i = 0; i<order.getProducts().size(); i++){
+            orderedProduct.setId(order.getProducts().get(i).getProductIdInStock());
+            orderedProduct.setAmount(order.getProducts().get(i).getItemOrdered());
+            stockFeignClient.reduceProductStock(orderedProduct);
+        }
+
 
         order.setOrderComplete(true);
         orderService.saveOrder(order);
 
         //call shipping service and provide order detail
+        String orderSuccessMsg = "You successfully placed an order: " +
+                "Your order: " ;
+        String orderedProducts = "";
+        for(int i =0; i<order.getProducts().size(); i++){
+            orderedProducts + order.getProducts().get(i).getProductName() + " "
+        }
 
         return "You successfully placed an order";
     }
 
-//    @RequestMapping("/hello")
-//    @ResponseBody
-//    public String hello() {
-//        return "Hello OrderService!";
-//    }
 }
