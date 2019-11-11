@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: config-management-service-deployment
+  labels:
+    app: config-management-service
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: config-management-service
+  template:
+    metadata:
+      labels:
+        app: config-management-service
+
+    spec:
+      containers:
+        - name: config-management-service
+          image: brianbwengye/config-management-service:latest
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KEY1
+              valueFrom:
+                configMapKeyRef:
+                  name: config-management-service-config
+                  key: someKey1
+            - name: NEXT_SERVICE
+              valueFrom:
+                configMapKeyRef:
+                  name: config-management-service-config
+                  key: nextService
+            - name: SERVICE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: config-management-service-secrets
+                  key: service-api-key
+            #MYSQL
+            - name: MYSQL_HOST
+              value: config-management-service-db
+
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PORT
+              value: "8081"
+
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: config-management-service-secrets
+                  key: mysql-root-password
