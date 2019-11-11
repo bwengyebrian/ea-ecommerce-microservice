@@ -81,24 +81,20 @@ public class OrderController {
 
     @PostMapping("/placeOrder")
     @ResponseBody
-    public String placingOrder(@RequestBody PaymentMethod paymentMethod, Model model){
-
+    public Order placingOrder(@RequestBody PaymentMethod method){
 
         Account account = accountFeignClient.getAccount(2);
 
         Order order = orderService.getCart(account.getId());
 
         //contact payment service
-//        String paymentType = paymentMethodFeignClient.paymentType();
-        String paymentResponse = paymentMethodFeignClient.makePayment(paymentMethod.getPaymentMethodType());
-//        String paymentResponse = paymentMethodFeignClient.paymentType();
+//        String paymentResponse = paymentMethodFeignClient.makePayment(method.getPaymentMethodType());
 
-
-        order.setPaymentType(paymentMethod.getPaymentMethodType());
+        order.setPaymentType(method.getPaymentMethodType());
+//        order.setPaymentStatus(paymentResponse);
         orderService.saveOrder(order);
 
-//        return paymentType + order.getPaymentType();
-        return paymentResponse;
+        return order;
     }
 
     @PostMapping("/checkout")
@@ -111,7 +107,10 @@ public class OrderController {
         Order order = orderService.getCart(account.getId());
 
         //call payment method service
-        String paymentMade = paymentMethodFeignClient.paymentMade();
+//        String paymentMade = paymentMethodFeignClient.paymentMade();
+//        System.out.println(order.getPaymentType());
+        String paymentResponse = paymentMethodFeignClient.makePayment(order.getPaymentType());
+        order.setPaymentStatus(paymentResponse);
 
         //call stock service to reduce the number of available items
         OrderedProduct orderedProduct = new OrderedProduct();
@@ -140,7 +139,7 @@ public class OrderController {
         String shippingDetail = shippingFeignClient.initiateShipping();
 
 
-        return orderSuccessMsg + shippingDetail;
+        return orderSuccessMsg + "| " + order.getPaymentStatus() + " | " + shippingDetail;
     }
 
 }

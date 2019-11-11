@@ -8,9 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class CreditPaymentController {
 
     @RequestMapping("credit/makepayment")
-    PaymentResponse makePayment(){
+    public String makePayment(){
         PaymentResponse res = new PaymentResponse(true,"Payment made successfully with Credit Card");
         System.out.println("payment made successfully with Credit Card");
-        return res;
+        return "Payment made successfully with Credit Card";
     }
 }

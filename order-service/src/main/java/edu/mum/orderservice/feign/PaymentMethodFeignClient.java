@@ -8,12 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @FeignClient(name = "ea-ecommerce-paymentservice")
 public interface PaymentMethodFeignClient {
 
-    @GetMapping("/payment/type")
-    public String paymentType();
-
-    @GetMapping("/payment/made")
-    public String paymentMade();
-
     @RequestMapping("/payment/methods/make/{key}")
-    String makePayment(@PathVariable String key);
+    public String makePayment(@PathVariable String key);
 }

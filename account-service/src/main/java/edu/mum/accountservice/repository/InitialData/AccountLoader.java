@@ -34,6 +34,7 @@ public class AccountLoader implements CommandLineRunner {
         address1.setZip("1234");
         addressRepository.save(address1);
         account1.setEmail("abebe@abebe.com");
+        account1.setPassword("1234");
         account1.setFirstName("abebe");
         account1.setLastName("beso");
         account1.setAddress(address1);
@@ -49,6 +50,7 @@ public class AccountLoader implements CommandLineRunner {
         address2.setZip("1235");
         addressRepository.save(address2);
         account2.setEmail("namazzi@abebe.com");
+        account2.setPassword("1234");
         account2.setFirstName("Namazzi");
         account2.setLastName("Abbo");
         account2.setAddress(address2);

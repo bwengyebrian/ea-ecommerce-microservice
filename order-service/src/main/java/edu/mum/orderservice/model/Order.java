@@ -21,6 +21,8 @@ public class Order {
     private boolean orderComplete = false;
     @Column(name = "Payment_Type")
     private String paymentType;
+    @Column(name = "Payment_Status")
+    private String paymentStatus;
 
     @OneToMany(mappedBy = "order")
     private List<Product> products = new ArrayList<>();
