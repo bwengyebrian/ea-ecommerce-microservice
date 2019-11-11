@@ -4,6 +4,8 @@ import edu.mum.accountservice.model.Account;
 import edu.mum.accountservice.model.Address;
 import edu.mum.accountservice.repository.AccountRepository;
 import edu.mum.accountservice.repository.AddressRepository;
+import edu.mum.accountservice.service.AccountService;
+import edu.mum.accountservice.serviceImpl.AccountServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -14,6 +16,9 @@ public class AccountLoader implements CommandLineRunner {
     private AddressRepository addressRepository;
     @Autowired
     private AccountRepository accountRepository;
+
+    @Autowired
+    private AccountServiceImpl accountService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -32,7 +37,9 @@ public class AccountLoader implements CommandLineRunner {
         account1.setFirstName("abebe");
         account1.setLastName("beso");
         account1.setAddress(address1);
-        accountRepository.save(account1);
+        account1.setUsername("user");
+        account1.setPassword("user");
+        accountService.saveAccount(account1);
 
         Account account2 = new Account();
         Address address2 = new Address();
@@ -45,7 +52,9 @@ public class AccountLoader implements CommandLineRunner {
         account2.setFirstName("Namazzi");
         account2.setLastName("Abbo");
         account2.setAddress(address2);
-        accountRepository.save(account2);
+        account2.setUsername("admin");
+        account2.setPassword("admin");
+       accountService.saveAccount(account2);
 
     }
 }
