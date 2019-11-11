@@ -48,7 +48,7 @@ public class ProductLoader implements ApplicationRunner {
         v3.setVendorName("Etiye Yimenashu");
 
         Product p1 = new Product();
-        p1.setProductName("LG");
+        p1.setProductName("LG TV 70 inch");
         p1.setPrice(300);
         p1.setAvailableItems(100);
         p1.setCategory(c1);

@@ -21,7 +21,9 @@ public class AccountServiceImpl implements AccountService {
     public Account saveAccount(Account account) {
         Address address = new Address();
         address = account.getAddress();
+//        System.out.println(address.getCity());
         addressRepository.save(address);
+        account.setAddress(address);
 
         return accountRepository.save(account);
     }

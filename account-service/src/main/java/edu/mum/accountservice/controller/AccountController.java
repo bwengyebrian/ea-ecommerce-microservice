@@ -14,7 +14,7 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
-    @PostMapping("/add")
+    @PostMapping("/create")
     public Account createAccount(@RequestBody Account account){
 
         return accountService.saveAccount(account);

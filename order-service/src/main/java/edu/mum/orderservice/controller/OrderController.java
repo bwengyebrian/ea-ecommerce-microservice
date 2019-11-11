@@ -89,11 +89,16 @@ public class OrderController {
         Order order = orderService.getCart(account.getId());
 
         //contact payment service
-        String paymentType = paymentMethodFeignClient.paymentType();
+//        String paymentType = paymentMethodFeignClient.paymentType();
+        String paymentResponse = paymentMethodFeignClient.makePayment(paymentMethod.getPaymentMethodType());
+//        String paymentResponse = paymentMethodFeignClient.paymentType();
+
+
         order.setPaymentType(paymentMethod.getPaymentMethodType());
         orderService.saveOrder(order);
 
-        return paymentType + order.getPaymentType();
+//        return paymentType + order.getPaymentType();
+        return paymentResponse;
     }
 
     @PostMapping("/checkout")
