@@ -108,8 +108,8 @@ public class OrderController {
 
         //call payment method service
 //        String paymentMade = paymentMethodFeignClient.paymentMade();
-        System.out.println(order.getPaymentType());
-        String paymentResponse = paymentMethodFeignClient.makePayment("credit");
+//        System.out.println(order.getPaymentType());
+        String paymentResponse = paymentMethodFeignClient.makePayment(order.getPaymentType());
         order.setPaymentStatus(paymentResponse);
 
         //call stock service to reduce the number of available items
