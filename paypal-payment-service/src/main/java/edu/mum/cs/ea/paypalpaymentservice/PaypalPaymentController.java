@@ -9,9 +9,9 @@ import org.springframework.web.bind.annotation.RestController;
 public class PaypalPaymentController {
 
     @RequestMapping("paypal/makepayment")
-    PaymentResponse makePayment(){
+    public String makePayment(){
         PaymentResponse res = new PaymentResponse(true,"Payment made successfully with Paypal");
         System.out.println("payment made successfully with Paypal");
-        return res;
+        return "Payment made successfully with Paypal";
     }
 }

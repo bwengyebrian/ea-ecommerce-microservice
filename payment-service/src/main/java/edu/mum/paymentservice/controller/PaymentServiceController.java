@@ -35,7 +35,7 @@ public class PaymentServiceController {
     }
 
     @RequestMapping("/payment/methods/make/{key}")
-        String makePayment(@PathVariable String key){
+       public String makePayment(@PathVariable String key){
         String paymentService = payments.getPaymentMethods().get(key);
         URI newUri = URI.create(paymentService);
         PaymentDetails paymentDetails = new PaymentDetails();
