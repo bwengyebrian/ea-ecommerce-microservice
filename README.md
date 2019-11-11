@@ -30,10 +30,6 @@ the credential to one of the accounts saved in the system:
 	"password": "1234"
 }
 
-{
-	"email": "namazzi@abebe.com",
-	"password": "1234"
-}
 
 The account detail will be returned. Try using a different email and password to login - null (empty JSON) will be returned.
 
