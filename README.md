@@ -21,6 +21,23 @@ Step 1: Make a POST request to http://localhost:8094/account/create/ to create a
 
 user detail will be saved to database and returned back as JSON object.
 
+
+Step 2: Make a POST request to http://localhost:8094/account/login/ to login to the system and be able to make order, you can use the following JSON body - it is 
+the credential to one of the accounts saved in the system:
+
+{
+	"email": "namazzi@abebe.com",
+	"password": "1234"
+}
+
+{
+	"email": "namazzi@abebe.com",
+	"password": "1234"
+}
+
+The account detail will be returned. Try using a different email and password to login - null (empty JSON) will be returned.
+
+
 Step 2: Make a POST request to http://localhost:8092/order/addToCart/ to add a product to cart, you can use the following JSON  body:
 
 {

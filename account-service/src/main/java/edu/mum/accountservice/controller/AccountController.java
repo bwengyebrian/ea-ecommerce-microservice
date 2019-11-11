@@ -30,4 +30,12 @@ public class AccountController {
     public List<Account> getAllAccounts(){
         return accountService.getAccounts();
     }
+
+    @PostMapping("/login")
+    public Account logginUser(@RequestBody Account account){
+
+        Account account1 = accountService.getAccountByEmailAndPassword(account.getEmail(), account.getPassword());
+
+        return account1;
+    }
 }

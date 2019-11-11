@@ -18,6 +18,7 @@ public class Account {
     @Column(name = "Last_Name")
     private String lastName;
     private String email;
+    private String password;
     @OneToOne
     private Address address;
 

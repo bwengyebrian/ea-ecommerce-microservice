@@ -37,4 +37,9 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> getAccounts() {
         return (List<Account>) accountRepository.findAll();
     }
+
+    @Override
+    public Account getAccountByEmailAndPassword(String email, String password) {
+        return accountRepository.findByEmailAndPassword(email, password);
+    }
 }
