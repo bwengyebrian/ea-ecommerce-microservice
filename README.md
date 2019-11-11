@@ -26,6 +26,7 @@ Step 2: Make a POST request to http://localhost:8094/account/login/ to login to 
 the credential to one of the accounts saved in the system:
 
 {
+
 	"email": "namazzi@abebe.com",
 	"password": "1234"
 }
