@@ -1,5 +1,10 @@
 
 Hello!
+
+For this project we used Spring Boot to develop the servces. We developed catalog-service, account-service, order-service, payment-service, bank-payment-service, credit-payment-service, paypal-payment-service, stock-service, shipping-service, and config-management-service.
+We used service discovery and secret management.
+We used Google Cloud service for deploying our services using Kubernetes.
+
 Follow this steps to run the application:
 
 
