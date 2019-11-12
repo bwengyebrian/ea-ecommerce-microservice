@@ -32,10 +32,20 @@ spec:
                   name: catalog-service-config
                   key: nextService
             - name: STOCK_SERVICE
-                valueFrom:
-                  configMapKeyRef:
-                    name: catalog-service-config
-                    key: stockService
+              valueFrom:
+                configMapKeyRef:
+                  name: catalog-service-config
+                  key: stockService
+            - name: STOCK_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: catalog-service-config
+                  key: stockServiceUrl
+            - name: ACCOUNT_SERVICE_URL
+              valueFrom:
+                configMapKeyRef:
+                  name: catalog-service-config
+                  key: accountServiceUrl
             - name: SERVICE_API_KEY
               valueFrom:
                 secretKeyRef:

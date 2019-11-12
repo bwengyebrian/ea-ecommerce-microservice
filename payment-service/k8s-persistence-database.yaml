@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: payment-service-db
+spec:
+  ports:
+    - protocol: TCP
+      port: 8081
+      targetPort: payment-service-db-port
+  selector:
+    app: payment-service-db
+    tier: db
+  clusterIP: None
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment-service-db
+spec:
+  selector:
+    matchLabels:
+      app: payment-service-db
+      tier: db
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: payment-service-db
+        tier: db
+    spec:
+      containers:
+        - image: mysql:5.6
+          name: payment-service-db
+          env:
+            # Use secret in real usage
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: payment-service-secrets
+                  key: mysql-root-password
+          ports:
+            - containerPort: 3306
+              name: payment-service-db-port
+          volumeMounts:
+            - name: payment-service-db-persistent-storage
+              mountPath: /var/lib/mysql
+      volumes:
+        - name: payment-service-db-persistent-storage
+          persistentVolumeClaim:
+            claimName: payment-service-pv-claim

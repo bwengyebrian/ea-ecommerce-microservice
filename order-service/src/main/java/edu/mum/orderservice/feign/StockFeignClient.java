@@ -8,20 +8,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.net.URI;
 import java.util.List;
 
-@FeignClient(name = "ea-ecommerce-stockservice")
+@FeignClient(value = "ea-ecommerce-stockservice",url = "http://temp")
 public interface StockFeignClient {
 
     @GetMapping("/product/{id}/detail")
-    public Product getProduct(@PathVariable("id") long id);
+    public Product getProduct(URI url,@PathVariable("id") long id);
 
     @GetMapping("/product/all")
-    public List<Product> getAllProducts();
+    public List<Product> getAllProducts(URI url);
 
     @GetMapping("/product/{id}/availableItems")
-    public Integer getNumberOfProductInTheStock(@PathVariable("id") int id);
+    public Integer getNumberOfProductInTheStock(URI url,@PathVariable("id") int id);
 
     @PostMapping("/product/reduceStock")
-    public void reduceProductStock(@RequestBody OrderedProduct orderedProduct);
+    public void reduceProductStock(URI url,@RequestBody OrderedProduct orderedProduct);
 }

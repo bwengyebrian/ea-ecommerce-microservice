@@ -7,3 +7,6 @@ data:
   #reference: https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/1.1.0.RC1/reference/html/#kubernetes-native-service-discovery
 
   nextService: catalog-service.default.svc.cluster.local:8080
+  stockService: stock-service
+  stockServiceUrl: stock-service.default.svc.cluster.local:8080
+  accountServiceUrl: account-service.default.svc.cluster.local:8080

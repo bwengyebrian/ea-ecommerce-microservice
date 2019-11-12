@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.net.URI;
 
-@FeignClient(value = "payment",url = "http://localhost:8080/paymentsx")
+@FeignClient(value = "payment",url = "http://example")
 public interface PaymentServiceFeign {
     @RequestMapping(path = "/makepayment")
     String makePayment(URI baseUrl);

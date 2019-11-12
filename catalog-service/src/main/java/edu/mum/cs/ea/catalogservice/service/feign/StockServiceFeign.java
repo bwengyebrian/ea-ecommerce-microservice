@@ -6,10 +6,11 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.net.URI;
 import java.util.Collection;
 
 @FeignClient(name = "stock-service",url = RestServiceUrl.CATALOG_SERVICE_URL)
 public interface StockServiceFeign {
-    @GetMapping("/all")
-    ResponseEntity<Collection<Product>> getProducts();
+    @GetMapping("/product/all")
+    ResponseEntity<Collection<Product>> getProducts(URI uri);
 }
