@@ -5,7 +5,9 @@ For this project we used Spring Boot to develop the servces. We developed catalo
 We used service discovery and secret management.
 We used Google Cloud service for deploying our services using Kubernetes.
 
-Follow this steps to run the application:
+You can get the source code on this github link: https://github.com/bwengyebrian/ea-ecommerce-microservice
+
+Follow this steps to make requests to the APIs get response:
 
 
 Step 1: Make a POST request to http://localhost:8080/account/create/ to create an account, you can use the following JSON  body:
