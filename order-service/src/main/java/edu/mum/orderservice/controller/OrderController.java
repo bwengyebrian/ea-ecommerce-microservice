@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
 
-@Controller
+@RestController
 @RequestMapping("/order")
 public class OrderController {
 
@@ -49,6 +49,7 @@ public class OrderController {
     @Value("${STOCK_SERVICE:#{null}}")
     private String stockService ;
 
+
     @GetMapping("/")
     public String displayOrderService(@ModelAttribute("product") Product product){
         return "orderPage";
@@ -56,17 +57,16 @@ public class OrderController {
 
 
     @PostMapping("/addToCart/{uid}")
-    @ResponseBody
+    //@ResponseBody
     public Order productsInCart(@PathVariable Integer uid,@RequestBody Product product,@RequestHeader(name = "Authorization") String token){
 
        System.out.println(token);
 
        //token = token.substring(7);
-
+        Account account = accountFeignClient.getAccount(URI.create("http://" + accountService),token,uid).getBody();
+        System.out.println("acount :" + account);
         product.setProductIdInStock(product.getId());
 
-        Account account = accountFeignClient.getAccount(URI.create(accountService),token,uid);
-//        System.out.println(account.getFirstName());
 
         //get the cart
         Order order = orderService.getCart(account.getId());
@@ -81,8 +81,8 @@ public class OrderController {
 
         Product product1 = new Product();
         product1.setProductIdInStock(product.getProductIdInStock());
-        product1.setProductName(stockFeignClient.getProduct(URI.create(stockService),product.getProductIdInStock()).getProductName());
-        double price = stockFeignClient.getProduct(URI.create(accountService),product.getProductIdInStock()).getPrice();
+        product1.setProductName(stockFeignClient.getProduct(URI.create("http://" + stockService),product.getProductIdInStock()).getProductName());
+        double price = stockFeignClient.getProduct(URI.create("http://" + stockService),product.getProductIdInStock()).getPrice();
         product1.setPrice(price);
         product1.setItemOrdered(product.getItemOrdered());
 
@@ -100,15 +100,18 @@ public class OrderController {
         product1.setOrder(order);
         productService.saveProduct(product1);
 
-      return order;
+        return order;
+        //return  new Order();
 
     }
 
     @PostMapping("/placeOrder/{uid}")
-    @ResponseBody
+   //@ResponseBody
     public Order placingOrder(@PathVariable Integer uid , @RequestBody PaymentMethod method,@RequestHeader(name = "Authorization") String token){
 
-        Account account = accountFeignClient.getAccount(URI.create(accountService),token,uid);
+        Account account = accountFeignClient.getAccount(URI.create("http://" + accountService),token,uid).getBody();
+
+        System.out.println("account :  " + account);
 
         Order order = orderService.getCart(account.getId());
 
@@ -126,7 +129,7 @@ public class OrderController {
     @ResponseBody
     public String checkoutOrder(@PathVariable Integer uid,@RequestBody Address address,@RequestHeader(name = "Authorization") String token){
 
-        Account account = accountFeignClient.getAccount(URI.create(accountService),token,2);
+        Account account = accountFeignClient.getAccount(URI.create("http://" + accountService),token,2).getBody();
 
         //get the cart
         Order order = orderService.getCart(account.getId());
@@ -134,7 +137,7 @@ public class OrderController {
         //call payment method service
 //        String paymentMade = paymentMethodFeignClient.paymentMade();
 //        System.out.println(order.getPaymentType());
-        String paymentResponse = paymentMethodFeignClient.makePayment(URI.create(paymentService),order.getPaymentType(),apiKey);
+        String paymentResponse = paymentMethodFeignClient.makePayment(URI.create("http://" + paymentService),order.getPaymentType(),apiKey);
         order.setPaymentStatus(paymentResponse);
 
         //call stock service to reduce the number of available items
@@ -142,7 +145,7 @@ public class OrderController {
         for (int i = 0; i<order.getProducts().size(); i++){
             orderedProduct.setId(order.getProducts().get(i).getProductIdInStock());
             orderedProduct.setAmount(order.getProducts().get(i).getItemOrdered());
-            stockFeignClient.reduceProductStock(URI.create(stockService),orderedProduct);
+            stockFeignClient.reduceProductStock(URI.create("http://" + stockService),orderedProduct);
         }
 
         order.setOrderComplete(true);
@@ -161,7 +164,7 @@ public class OrderController {
 //        item.setOrder(order);
 //        item.setAddress(address);
 //        String shippingDetail = shippingFeignClient.initiateShipping(item);
-        String shippingDetail = shippingFeignClient.initiateShipping(URI.create(shippingService));
+        String shippingDetail = shippingFeignClient.initiateShipping(URI.create("http://" + shippingService));
 
 
         return orderSuccessMsg + "| " + order.getPaymentStatus() + " | " + shippingDetail;

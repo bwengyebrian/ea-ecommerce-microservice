@@ -18,10 +18,10 @@
         <java.version>1.8</java.version>
         <spring-cloud.version>Hoxton.RC1</spring-cloud.version>
 
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <docker.image.prefix>getaneh</docker.image.prefix>
-        <dockerfile-maven-version>1.3.6</dockerfile-maven-version>
+<!--        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>-->
+<!--        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>-->
+<!--        <docker.image.prefix>getaneh</docker.image.prefix>-->
+<!--        <dockerfile-maven-version>1.3.6</dockerfile-maven-version>-->
     </properties>
 
     <dependencies>
@@ -101,33 +101,28 @@
     </dependencyManagement>
 
     <build>
-<!--        <plugins>-->
-<!--            <plugin>-->
-<!--                <groupId>org.springframework.boot</groupId>-->
-<!--                <artifactId>spring-boot-maven-plugin</artifactId>-->
-<!--            </plugin>-->
-<!--        </plugins>-->
 
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.7.0</version>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                    </configuration>
-<!--                    <dependencies>-->
-<!--                        <dependency>-->
-<!--                            <groupId>org.ow2.asm</groupId>-->
-<!--                            <artifactId>asm</artifactId>-->
-<!--                            <version>6.1</version> &lt;!&ndash; Use newer version of ASM &ndash;&gt;-->
-<!--                        </dependency>-->
-<!--                    </dependencies>-->
-                </plugin>
-            </plugins>
-        </pluginManagement>
+
+<!--        <pluginManagement>-->
+<!--            <plugins>-->
+<!--                <plugin>-->
+<!--                    <groupId>org.apache.maven.plugins</groupId>-->
+<!--                    <artifactId>maven-compiler-plugin</artifactId>-->
+<!--                    <version>3.7.0</version>-->
+<!--                    <configuration>-->
+<!--                        <source>${java.version}</source>-->
+<!--                        <target>${java.version}</target>-->
+<!--                    </configuration>-->
+<!--&lt;!&ndash;                    <dependencies>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <groupId>org.ow2.asm</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <artifactId>asm</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;                            <version>6.1</version> &lt;!&ndash; Use newer version of ASM &ndash;&gt;&ndash;&gt;-->
+<!--&lt;!&ndash;                        </dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </dependencies>&ndash;&gt;-->
+<!--                </plugin>-->
+<!--            </plugins>-->
+<!--        </pluginManagement>-->
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
@@ -135,43 +130,50 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>com.spotify</groupId>
-                <artifactId>dockerfile-maven-plugin</artifactId>
-                <version>${dockerfile-maven-version}</version>
-                <executions>
-                    <execution>
-                        <id>default</id>
-                        <goals>
-                            <goal>build</goal>
-                            <goal>push</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <!-- Necessary because the Maven Archiver plugin is not yet ready for java 9/10 -->
-<!--                <dependencies>-->
-<!--                    <dependency>-->
-<!--                        <groupId>org.codehaus.plexus</groupId>-->
-<!--                        <artifactId>plexus-archiver</artifactId>-->
-<!--                        <version>3.4</version>-->
-<!--                    </dependency>-->
-<!--                    <dependency>-->
-<!--                        <groupId>javax.activation</groupId>-->
-<!--                        <artifactId>javax.activation-api</artifactId>-->
-<!--                        <version>1.2.0</version>-->
-<!--                    </dependency>-->
-<!--                </dependencies>-->
+                <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
-                    <repository>${docker.image.prefix}/${project.artifactId}</repository>
-                    <tag>${project.version}</tag>
-                    <buildArgs>
-                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
-                    </buildArgs>
-                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+                    <skipTests>true</skipTests>
                 </configuration>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+            </plugin>
+<!--            <plugin>-->
+<!--                <groupId>com.spotify</groupId>-->
+<!--                <artifactId>dockerfile-maven-plugin</artifactId>-->
+<!--                <version>${dockerfile-maven-version}</version>-->
+<!--                <executions>-->
+<!--                    <execution>-->
+<!--                        <id>default</id>-->
+<!--                        <goals>-->
+<!--                            <goal>build</goal>-->
+<!--                            <goal>push</goal>-->
+<!--                        </goals>-->
+<!--                    </execution>-->
+<!--                </executions>-->
+<!--                &lt;!&ndash; Necessary because the Maven Archiver plugin is not yet ready for java 9/10 &ndash;&gt;-->
+<!--&lt;!&ndash;                <dependencies>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <groupId>org.codehaus.plexus</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <artifactId>plexus-archiver</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <version>3.4</version>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;                    <dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <groupId>javax.activation</groupId>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <artifactId>javax.activation-api</artifactId>&ndash;&gt;-->
+<!--&lt;!&ndash;                        <version>1.2.0</version>&ndash;&gt;-->
+<!--&lt;!&ndash;                    </dependency>&ndash;&gt;-->
+<!--&lt;!&ndash;                </dependencies>&ndash;&gt;-->
+<!--                <configuration>-->
+<!--                    <repository>${docker.image.prefix}/${project.artifactId}</repository>-->
+<!--                    <tag>${project.version}</tag>-->
+<!--                    <buildArgs>-->
+<!--                        <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>-->
+<!--                    </buildArgs>-->
+<!--                    <useMavenSettingsForAuth>true</useMavenSettingsForAuth>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
         </plugins>
 
     </build>

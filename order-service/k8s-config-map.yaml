@@ -1,0 +1,17 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: order-service-config
+data:
+  someKey1: value1
+  #reference: https://cloud.spring.io/spring-cloud-static/spring-cloud-kubernetes/1.1.0.RC1/reference/html/#kubernetes-native-service-discovery
+
+  nextService: order-service.default.svc.cluster.local:8080
+
+  accountService: account-service.default.svc.cluster.local:8080
+
+  stockService: stock-service.default.svc.cluster.local:8080
+
+  paymentService: payment-service.default.svc.cluster.local:8080
+
+  shippingService: shipping-service.default.svc.cluster.local:8080
